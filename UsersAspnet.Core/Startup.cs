@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UsersAspnet.Core.Context;
-using UsersAspnet.Core.Interface;
-using UsersAspnet.Core.Models;
-using UsersAspnet.Core.Service;
 
 namespace UsersAspnet.Core
 {
@@ -17,7 +13,7 @@ namespace UsersAspnet.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 
-        IConfiguration Configuration;
+       public IConfiguration Configuration;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,8 +22,7 @@ namespace UsersAspnet.Core
         {
             services.AddDbContext<ApplicationDbContext>(context => context.UseSqlServer(
                 connectionString: Configuration.GetConnectionString("DefaultSqlServerConnection")
-                ));   
-            services.AddScoped<IUserAsync,UserService>();
+                ));           
             services.AddControllers();
         }
 

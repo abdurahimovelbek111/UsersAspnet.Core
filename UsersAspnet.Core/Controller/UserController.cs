@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 using UsersAspnet.Core.Context;
-using UsersAspnet.Core.Interface;
 using UsersAspnet.Core.Models;
 
 namespace UsersAspnet.Core.Controller
@@ -11,28 +10,58 @@ namespace UsersAspnet.Core.Controller
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserAsync _userAsync;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public UserController(IUserAsync userAsync)
+        public UserController(ApplicationDbContext  applicationDbContext)
         {
-            _userAsync = userAsync;
+            _applicationDbContext = applicationDbContext;
         }
-        [HttpGet()]
-        public async  Task<IActionResult> GetAllUsers()
+        [HttpGet]
+        public IActionResult GetAllUsers()
         {
-            return Ok(await _userAsync.GetAllAsync());
+            var user = _applicationDbContext.Users;
+            return Ok(user);
         }
-        [HttpGet("id:int")]
-        public async Task<IActionResult> GetUserById(int id)
+        [HttpGet("{id}")]
+        public IActionResult GetUserById(int id)
         {
-            return Ok(await _userAsync.GetByIdAsync(id));
+            var user =_applicationDbContext.Users.Where(x => x.Id == id).FirstOrDefault();
+            if (user is null)
+                return NotFound($"Bunday {id}-->Id dagi User ma'lumotlari yuq . Iltimos qaytadan Users ro'yxatini qaytadan ko'rib chiqing !!!");
+
+            return Ok(user);
         }
-        [HttpPost()]
-        public async Task<IActionResult> PostUser([FromBody]User user)
+        [HttpPost]
+        public IActionResult PostUser([FromBody]User user)
         {
-            return Created("", await _userAsync.AddAsync(user));
+            _applicationDbContext.AddAsync(user);
+            _applicationDbContext.SaveChanges();
+            return Created("", user);
+        }
+        [HttpDelete("{id}")]
+        public IActionResult GetUserDelete(int id)
+        {
+            var user = _applicationDbContext.Users.Where(x => x.Id == id).FirstOrDefault();
+            if (user is null)
+                return NotFound($"Uchirish uchun bunday {id}->Id dagi  User ma'lumotlari yuq . Iltimos qaytadan Users ro'yxatini qaytadan ko'rib chiqing !!!");
+                _applicationDbContext.Remove(user);
+                _applicationDbContext.SaveChanges();          
+            return NoContent();
         }
 
+        [HttpPut("{id}")]
+        public IActionResult GetUserUpdate(int id,[FromBody]User user)
+        {
+            if (id == user.Id)
+            {
+                _applicationDbContext.Update(user);
+                _applicationDbContext.SaveChanges();
+            }
+            else
+                NotFound($"Update qilishda {id}-->Id dagi User ma'lumotlari yuq .Iltimos qaytadan Users ro'yxatini qaytadan ko'rib chiqing !!!");
+            return Ok(user);
+        }
 
     }
+
 }
