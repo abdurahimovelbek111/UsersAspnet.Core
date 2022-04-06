@@ -15,12 +15,7 @@ namespace UsersAspnet.Core
         {
             CreateHostBuilder(args).Build().Run();
         }
-
-
-
-
-
-
+        //Qalaysan jigarim
        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
