@@ -15,19 +15,7 @@ namespace UsersAspnet.Core
         {
             CreateHostBuilder(args).Build().Run();
         }
-
-
-
-
-       //// Console.WriteLine("gf");
-
-
-
-
-
-
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+       public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
